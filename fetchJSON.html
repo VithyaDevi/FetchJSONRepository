@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title> Havas assessment One </title>
+    <style>
+    
+    </style>
+  </head>
+  <body onload="loadXMLDoc()">
+    <div id='demo'>
+      <script type="text/javascript">
+        function loadXMLDoc() {
+
+          function findAverage(grades) { //average function
+          var sum = 0;  
+            var count = grades.length; //to calculate average according to the length
+          for(var i=0; i < count; i++){
+            sum = sum + parseInt(grades[i]);
+          }
+          return sum/count;
+          }
+
+          var xmlhttp = new XMLHttpRequest(); //sending HTTP
+          xmlhttp.onreadystatechange = function() { //main function
+              if (this.readyState == 4 && this.status == 200) {
+                  var myArr = JSON.parse(this.responseText);
+              
+                  for (var i = 0; i < myArr.students.length ; i++) {
+                 
+                        //displaying first name and last name of each student
+                        keyValue= myArr.students[i];
+                        let name = keyValue["firstName"] + " " + keyValue["lastName"];  
+                        name = name.fontsize("5");                    
+                        document.getElementById("demo").innerHTML += name + "<br>";
+                        for (var key in keyValue) {
+                          if (key == "firstName" || key == "lastName") {
+                              continue;
+                          }
+
+                        //displaying average of each student
+                        if(key == "grades"){
+                        var value =  findAverage(keyValue[key]);
+                          document.getElementById("demo").innerHTML += "<br>" + "Average :" + value +"%"+ "<br>";
+                          continue;
+                        }
+
+                        //displaying pic of each student
+                        if(key == "pic"){
+                          var image = new Image();
+                          image.src = keyValue["pic"];
+                          var res = document.getElementById("demo").appendChild(image) + "<br>";
+                          continue;
+                        }
+
+                         //displaying other details of the student
+                          document.getElementById("demo").innerHTML +="<br>" + key + ":" + keyValue[key] + "<br>" + "<br>";
+                  }}
+              }
+          };
+          xmlhttp.open("GET", "https://www.hatchways.io/api/assessment/students", true);
+          xmlhttp.send();
+        }
+      </script>
+      </body>
